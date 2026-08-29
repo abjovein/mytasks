@@ -1,0 +1,9 @@
+{
+  "name":"MyTasks",
+  "short_name":"MyTasks",
+  "start_url":"./index.html",
+  "display":"standalone",
+  "background_color":"#f5f6f3",
+  "theme_color":"#5d7650",
+  "icons":[]
+}

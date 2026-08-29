@@ -1,0 +1,105 @@
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="MyTasks"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#5d7650"><title>MyTasks</title><style>
+*{box-sizing:border-box}body{margin:0;background:#f5f6f3;color:#20231f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.side{position:fixed;inset:0 auto 0 0;width:230px;background:white;border-right:1px solid #e4e8e0;padding:28px 16px}.logo{font-size:23px;font-weight:800;padding:0 12px 28px}.logo span{color:#5d7650}.nav button{display:block;width:100%;border:0;background:none;text-align:left;padding:12px;border-radius:10px;color:#50564e;margin:3px 0}.nav .active{background:#eaf0e7;color:#5d7650;font-weight:700}.main{margin-left:230px;padding:34px 42px;max-width:1100px}.top{display:flex;justify-content:space-between;align-items:end;margin-bottom:22px}.date{color:#747a72;font-size:14px}.title{font-size:32px;font-weight:800}.add,.quick button{border:0;background:#5d7650;color:white;border-radius:10px;padding:11px 16px;font-weight:700}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.stat,.panel,.emptybox{background:white;border:1px solid #e4e8e0;border-radius:15px;padding:17px}.stat b{font-size:25px}.stat small{display:block;color:#747a72}.layout{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.panel h2{font-size:18px;margin:0 0 14px}.quick{display:flex;gap:8px}.quick input{flex:1;border:1px solid #e4e8e0;border-radius:9px;padding:11px}.quick button{background:#eaf0e7;color:#5d7650}.filters{display:flex;gap:7px;margin:10px 0}.filters button{border:1px solid #e4e8e0;background:white;border-radius:8px;padding:6px 9px;color:#747a72}.filters .active{background:#eaf0e7;color:#5d7650}.task{display:flex;gap:11px;padding:13px 2px;border-bottom:1px solid #e4e8e0}.check{width:20px;height:20px;border:2px solid #adb5a9;border-radius:50%;flex:none}.task.done .check{background:#5d7650;border-color:#5d7650}.task.done .txt{text-decoration:line-through;color:#9ba099}.meta{font-size:12px;color:#747a72;margin-top:4px}.task-actions{margin-left:auto;display:flex;gap:5px}.task-actions button{border:0;background:#f1f3ef;border-radius:6px;padding:4px 6px;font-size:11px;cursor:pointer}.high{color:#b65a51;font-size:11px;margin-left:6px;font-weight:700}.bar{height:7px;background:#edf0eb;border-radius:8px;margin:9px 0 14px}.fill{height:100%;background:#5d7650;border-radius:8px}.other{display:none}.other.show{display:block}.today.hide{display:none}.modal{display:none;position:fixed;inset:0;background:#0005;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.box{background:white;border-radius:16px;padding:22px;width:min(430px,100%)}.box input,.box select{width:100%;padding:11px;border:1px solid #e4e8e0;border-radius:9px;margin:6px 0 12px}.actions{text-align:right}.actions button{border:0;border-radius:9px;padding:10px 14px;margin-left:7px}.save{background:#5d7650;color:white}
+@media(max-width:700px){.side{width:65px;padding:20px 6px}.logo{font-size:0;text-align:center}.logo span{font-size:22px}.nav button{font-size:0;text-align:center}.main{margin-left:65px;padding:22px 12px}.title{font-size:26px}.stats{grid-template-columns:1fr 1fr}.layout{grid-template-columns:1fr}}
+</style></head><body>
+<aside class="side"><div class="logo">My<span>Tasks</span></div><div class="nav">
+<button class="active" onclick="page('Today',this)">☀️ Today</button><button onclick="page('Upcoming',this)">📅 Upcoming</button><button onclick="page('Projects',this)">▣ Projects</button><button onclick="page('Recurring',this)">↻ Recurring</button><button onclick="page('Ideas',this)">✦ Ideas</button><button onclick="page('Completed',this)">✓ Completed</button></div></aside>
+<main class="main"><div class="top"><div><div class="date" id="date"></div><div class="title" id="title">Today</div></div><button class="add" onclick="openAdd()">＋ Add task</button></div>
+<div id="today" class="today"><div class="stats"><div class="stat"><b id="rem">0</b><small>Remaining today</small></div><div class="stat"><b id="comp">0</b><small>Completed today</small></div><div class="stat"><b id="high">0</b><small>High priority</small></div><div class="stat"><b id="over">0</b><small>Overdue</small></div></div>
+<div class="layout"><section class="panel"><h2>Today's tasks</h2><div class="quick"><input id="quick" placeholder="What needs doing?" onkeydown="if(event.key==='Enter')quickAdd()"><button onclick="quickAdd()">Add</button></div><div style="margin:8px 0"><input id="searchBox" placeholder="Search today’s tasks…" oninput="render()" style="width:100%;padding:9px;border:1px solid #e4e8e0;border-radius:9px;background:#fafbf9"></div><div class="filters"><button class="active" onclick="setFilter('all',this)">All</button><button onclick="setFilter('high',this)">High</button><button onclick="setFilter('open',this)">Open</button><button onclick="setFilter('done',this)">Done</button></div><div id="tasks"></div></section>
+<section class="panel"><h2>My focus</h2><div><b>🌿 Garden</b><span style="float:right">65%</span><div class="bar"><div class="fill" style="width:65%"></div></div></div><div><b>🏠 Home</b><span style="float:right">40%</span><div class="bar"><div class="fill" style="width:40%"></div></div></div><div><b>🏃 Fitness</b><span style="float:right">55%</span><div class="bar"><div class="fill" style="width:55%"></div></div></div></section></div></div>
+<div id="other" class="other"><div class="emptybox"><h2 id="otherTitle"></h2><p id="otherText" style="color:#747a72"></p></div></div></main>
+<div id="modal" class="modal"><div class="box"><h2>Add a task</h2>
+<input id="nt" placeholder="What needs doing?">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<select id="cat"><option>Personal</option><option>Home</option><option>Garden</option><option>Fitness</option><option>Errands</option><option>Other</option></select>
+<select id="pri"><option value="normal">Normal priority</option><option value="high">High priority</option></select>
+</div>
+<label style="font-size:12px;color:#747a72">Due date</label>
+<input id="due" type="date">
+<label style="font-size:12px;color:#747a72">Time (optional)</label>
+<input id="tm" type="time">
+<label style="font-size:12px;color:#747a72">Repeat</label>
+<select id="repeat"><option value="none">Does not repeat</option><option value="daily">Every day</option><option value="weekly">Every week</option><option value="monthly">Every month</option></select>
+<label style="font-size:12px;color:#747a72">Reminder (optional)</label><input id="reminder" type="datetime-local"><label style="font-size:12px;color:#747a72">Notes (optional)</label>
+<textarea id="notes" rows="3" placeholder="Add a note…" style="width:100%;padding:11px;border:1px solid #e4e8e0;border-radius:9px;margin:6px 0 12px;resize:vertical"></textarea>
+<div class="actions"><button onclick="closeAdd()">Cancel</button><button class="save" onclick="saveTask()">Add task</button></div></div></div>
+script>
+const K='mytasks-v2',T=()=>new Date().toISOString().slice(0,10);let pageName='Today';let tasks=JSON.parse(localStorage.getItem(K)||'null')||[
+{id:1,t:'Water the new plants',cat:'Garden',p:'normal',due:T(),done:false},{id:2,t:'5 km run',cat:'Fitness',p:'normal',due:T(),done:false},{id:3,t:'Buy garden soil',cat:'Errands',p:'high',due:T(),done:false},{id:4,t:'Book appointment',cat:'Personal',p:'normal',due:T(),done:false},{id:5,t:'Check patio planting',cat:'Garden',p:'normal',due:T(),done:true}];let f='all';
+function save(){localStorage.setItem(K,JSON.stringify(tasks))}
+function render(){
+ let d=T(),a=tasks.filter(x=>x.due===d);
+ rem.textContent=a.filter(x=>!x.done).length;
+ comp.textContent=a.filter(x=>x.done).length;
+ high.textContent=a.filter(x=>!x.done&&x.p==='high').length;
+ over.textContent=tasks.filter(x=>!x.done&&x.due&&x.due<d).length;
+ let q=(document.getElementById('searchBox')?.value||'').toLowerCase().trim(); let l=q?a.filter(x=>x.t.toLowerCase().includes(q)||x.cat.toLowerCase().includes(q)):a;
+ if(f==='high')l=l.filter(x=>x.p==='high');
+ if(f==='open')l=a.filter(x=>!x.done);
+ if(f==='done')l=a.filter(x=>x.done);
+ l.sort((x,y)=>Number(x.done)-Number(y.done)||Number(y.p==='high')-Number(x.p==='high'));
+ tasksDiv.innerHTML=l.length?l.map(x=>'<div class="task '+(x.done?'done':'')+'"><div class="check" onclick="toggle('+x.id+')"></div><div style="min-width:0"><div class="txt">'+esc(x.t)+(x.p==='high'?'<span class="high">HIGH</span>':'')+'</div><div class="meta">'+x.cat+(x.time?' · '+x.time:'')+(x.reminder?' · 🔔':'')+' · Today</div></div><div class="task-actions"><button onclick="editTask('+x.id+')">Edit</button><button onclick="deleteTask('+x.id+')">×</button></div></div>').join(''):'<div style="color:#747a72;padding:18px 2px">Nothing here. Enjoy the clear space.</div>';
+}
+
+function esc(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
+function toggle(id){let x=tasks.find(y=>y.id===id);x.done=!x.done;save();render();if(pageName==='Upcoming')other.innerHTML=upcomingView();else if(pageName==='Projects')renderProjects();else if(pageName==='Recurring')renderRecurring();else if(pageName==='Ideas')renderIdeas();else if(pageName==='Completed')renderCompleted()}
+function quickAdd(){let v=quick.value.trim();if(!v)return;tasks.unshift({id:Date.now(),t:v,cat:'Personal',p:'normal',due:T(),time:'',repeat:'none',notes:'',done:false});quick.value='';save();render()}
+function openAdd(){modal.classList.add('show');if(!nt.value)due.value=T();nt.focus()}function closeAdd(){modal.classList.remove('show');document.querySelector('.box h2').textContent='Add a task';document.querySelector('.save').textContent='Add task';document.querySelector('.save').onclick=saveTask}
+function saveTask(){let v=nt.value.trim();if(!v)return;tasks.unshift({id:Date.now(),t:v,cat:cat.value,p:pri.value,due:due.value||T(),time:tm.value||'',repeat:repeat.value,notes:notes.value.trim(),parent:(document.getElementById('parent')||{value:''}).value.trim(),reminder:(document.getElementById('reminder')||{value:''}).value,done:false});nt.value='';tm.value='';notes.value='';repeat.value='none';if(document.getElementById('reminder'))reminder.value='';save();closeAdd();render()}
+function editTask(id){
+ let x=tasks.find(y=>y.id===id); if(!x)return;
+ nt.value=x.t; cat.value=x.cat||'Personal'; pri.value=x.p||'normal'; due.value=x.due||T();
+ tm.value=x.time||''; repeat.value=x.repeat||'none'; notes.value=x.notes||'';
+ if(document.getElementById('reminder')) reminder.value=x.reminder||'';
+ openAdd();
+ document.querySelector('.box h2').textContent='Edit task';
+ document.querySelector('.save').textContent='Save changes';
+ document.querySelector('.save').onclick=function(){
+  x.t=nt.value.trim()||x.t; x.cat=cat.value; x.p=pri.value; x.due=due.value||T();
+  x.time=tm.value; x.repeat=repeat.value; x.notes=notes.value.trim();
+  if(document.getElementById('reminder')) x.reminder=reminder.value;
+  save(); closeAdd(); render();
+ };
+}
+function deleteTask(id){if(confirm('Delete this task?')){tasks=tasks.filter(x=>x.id!==id);save();render()}}
+function setFilter(x,b){f=x;document.querySelectorAll('.filters button').forEach(q=>q.classList.remove('active'));b.classList.add('active');render()}
+function fmtDate(s){if(!s)return 'No date';let d=new Date(s+'T00:00:00');return new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'numeric',month:'short'}).format(d)}
+function upcomingView(){let d=T(), list=tasks.filter(x=>x.due&&x.due>d).sort((a,b)=>a.due.localeCompare(b.due));if(!list.length)return '<div class="emptybox"><h2>Upcoming</h2><p style="color:#747a72">No upcoming tasks yet.</p></div>';let groups={};list.forEach(x=>(groups[x.due]??=[]).push(x));let out='<div class="emptybox"><h2 style="margin-top:0">Upcoming</h2>';Object.keys(groups).forEach(day=>{out+='<h3>'+fmtDate(day)+'</h3>';groups[day].forEach(x=>{out+='<div class="task '+(x.done?'done':'')+'"><div class="check" onclick="toggle('+x.id+')"></div><div><div class="txt">'+esc(x.t)+(x.p==='high'?'<span class="high">HIGH</span>':'')+'</div><div class="meta">'+x.cat+(x.time?' · '+x.time:'')+'</div></div></div>'})});return out+'</div>'}
+function page(n,b){pageName=n;document.querySelectorAll('.nav button').forEach(q=>q.classList.remove('active'));b.classList.add('active');title.textContent=n;today.className=n==='Today'?'today':'today hide';other.className=n==='Today'?'other':'other show';if(n==='Upcoming'){other.innerHTML=upcomingView()}else if(n==='Projects'){renderProjects()}else if(n==='Recurring'){renderRecurring()}else if(n==='Ideas'){renderIdeas()}else if(n==='Completed'){renderCompleted()}}
+function renderIdeas(){
+ let list=tasks.filter(x=>x.cat==='Ideas'||x.isIdea);
+ let out='<div class="emptybox"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Ideas</h2><button class="add" onclick="addIdea()">＋ Idea</button></div>';
+ if(!list.length)out+='<p style="color:#747a72;margin-top:18px">No ideas yet. Keep this space for things you may want to do later.</p>';
+ list.forEach(x=>out+='<div class="task '+(x.done?'done':'')+'"><div class="check" onclick="toggle('+x.id+')"></div><div><div class="txt">'+esc(x.t)+'</div><div class="meta">'+(x.notes||'Idea')+'</div></div></div>');
+ other.innerHTML=out+'</div>';
+}
+function exportTasks(){let blob=new Blob([JSON.stringify(tasks,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mytasks-data.json';a.click();URL.revokeObjectURL(a.href)}
+function clearCompleted(){if(confirm('Clear all completed tasks?')){tasks=tasks.filter(x=>!x.done);save();renderCompleted();render()}}
+function addIdea(){let v=prompt('What is your idea?');if(!v)return;tasks.unshift({id:Date.now(),t:v,cat:'Ideas',p:'normal',due:'',time:'',repeat:'none',notes:'Idea',isIdea:true,done:false});save();renderIdeas()}
+function renderCompleted(){
+ let list=tasks.filter(x=>x.done).sort((a,b)=>(b.due||'').localeCompare(a.due||''));
+ let out='<div class="emptybox"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Completed</h2><button class="add" onclick="exportTasks()">Export</button><button class="add" onclick="clearCompleted()">Clear completed</button></div>';
+ if(!list.length)out+='<p style="color:#747a72">No completed tasks yet.</p>';
+ list.forEach(x=>out+='<div class="task done"><div class="check" onclick="toggle('+x.id+')"></div><div><div class="txt">'+esc(x.t)+'</div><div class="meta">'+x.cat+' · '+(x.due||'No date')+'</div></div></div>');
+ other.innerHTML=out+'</div>';
+}
+function renderRecurring(){
+ let list=tasks.filter(x=>x.repeat&&x.repeat!=='none');
+ let out='<div class="emptybox"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Recurring tasks</h2><button class="add" onclick="openAdd()">＋ Task</button></div>';
+ if(!list.length) out+='<p style="color:#747a72;margin-top:18px">No recurring tasks yet. Add one and choose a repeat schedule.</p>';
+ list.forEach(x=>{let label={daily:'Every day',weekly:'Every week',monthly:'Every month'}[x.repeat]||x.repeat;out+='<div class="task '+(x.done?'done':'')+'"><div class="check" onclick="toggle('+x.id+')"></div><div><div class="txt">'+esc(x.t)+'</div><div class="meta">'+x.cat+' · '+label+(x.time?' · '+x.time:'')+'</div></div></div>'});
+ other.innerHTML=out+'</div>';
+}
+function renderProjects(){
+ let projects=[{name:'Garden',icon:'🌿',filter:'Garden'},{name:'Home',icon:'🏠',filter:'Home'},{name:'Fitness',icon:'🏃',filter:'Fitness'}];
+ let out='<div class="emptybox"><div style="display:flex;justify-content:space-between;align-items:center"><h2 style="margin:0">Projects</h2><button class="add" onclick="addProject()">＋ Project</button></div>';
+ projects.forEach(p=>{let a=tasks.filter(x=>x.cat===p.filter),done=a.filter(x=>x.done).length,pc=a.length?Math.round(done/a.length*100):0;
+ out+='<div class="proj" style="margin-top:16px"><div class="phead"><span>'+p.icon+' '+p.name+'</span><span>'+pc+'%</span></div><div class="bar"><div class="fill" style="width:'+pc+'%"></div></div>';
+ if(a.length){a.forEach(x=>out+='<div class="task '+(x.done?'done':'')+'"><div class="check" onclick="toggle('+x.id+')"></div><div><div class="txt">'+esc(x.t)+(x.p==='high'?'<span class="high">HIGH</span>':'')+'</div><div class="meta">'+(x.due===T()?'Today':x.due||'No date')+(x.time?' · '+x.time:'')+'</div></div></div>')}else out+='<div class="meta">No tasks in this project yet.</div>';
+ out+='</div>'}); out+='</div>';other.innerHTML=out;
+}
+function addProject(){let n=prompt('Project name');if(!n)return;alert('Project "'+n+'" created as a category. Add tasks to it using the task category menu.')}
+
+date.textContent=new Intl.DateTimeFormat('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());render();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script></body></html>
