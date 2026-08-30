@@ -39,5 +39,27 @@ function setFilter(x,b){f=x;document.querySelectorAll('.filters button').forEach
 function fmtDate(s){if(!s)return 'No date';let d=new Date(s+'T00:00:00');return new Intl.DateTimeFormat('en-GB',{weekday:'short',day:'numeric',month:'short'}).format(d)}
 function upcomingView(){let d=T(), list=tasks.filter(x=>x.due&&x.due>d).sort((a,b)=>a.due.localeCompare(b.due));if(!list.length)return '<div class="emptybox"><h2>Upcoming</h2><p style="color:#747a72">No upcoming tasks yet.</p></div>';let groups={};list.forEach(x=>(groups[x.due]??=[]).push(x));let out='<div class="emptybox"><h2 style="margin-top:0">Upcoming</h2>';Object.keys(groups).forEach(day=>{out+='<h3>'+fmtDate(day)+'</h3>';groups[day].forEach(x=>{out+='<div class="task '+(x.done?'done':'')+'"><div class="check" onclick="toggle('+x.id+')"></div><div><div class="txt">'+esc(x.t)+(x.p==='high'?'<span class="high">HIGH</span>':'')+'</div><div class="meta">'+x.cat+(x.time?' Â· '+x.time:'')+'</div></div></div>'})});return out+'</div>'}
 function page(n,b){pageName=n;document.querySelectorAll('.nav button').forEach(q=>q.classList.remove('active'));b.classList.add('active');title.textContent=n;today.className=n==='Today'?'today':'today hide';other.className=n==='Today'?'other':'other show';if(n==='Upcoming'){other.innerHTML=upcomingView()}else if(n!=='Today'){otherTitle.textContent=n;otherText.textContent={Projects:'Group related tasks and track progress.',Recurring:'Daily, weekly and custom repeating tasks.',Ideas:'Keep future ideas here without cluttering Today.',Completed:'Your completed task history.'}[n]}}
-date.textContent=new Intl.DateTimeFormat('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());render();
+function handleVoiceTask(){
+const params=new URLSearchParams(window.location.search);
+const voiceTask=params.get('voiceTask');
+if(!voiceTask)return;
+const text=voiceTask.trim();
+if(!text)return;
+tasks.unshift({
+id:Date.now(),
+t:text,
+cat:'Personal',
+p:'normal',
+due:T(),
+time:'',
+repeat:'none',
+notes:'Added by voice',
+done:false
+});
+save();
+history.replaceState({},document.title,window.location.pathname);
+render();
+}
+
+date.textContent=new Intl.DateTimeFormat('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());handleVoiceTask();
 </script></body></html>
